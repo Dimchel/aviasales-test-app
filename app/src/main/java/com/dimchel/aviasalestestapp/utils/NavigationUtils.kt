@@ -1,6 +1,6 @@
 package com.dimchel.aviasalestestapp.utils
 
-import com.dimchel.aviasalestestapp.models.NavigationPointModel
+import com.dimchel.aviasalestestapp.features.loading.models.NavigationPointModel
 import com.google.android.gms.maps.model.LatLng
 import java.util.ArrayList
 

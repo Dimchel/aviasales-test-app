@@ -21,6 +21,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -36,5 +41,19 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
 
+    def lifecycle_version = '2.0.0'
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha04"
+
+    // Network
+    def retrofit_ver = "2.4.0"
+    def okhttp_ver = "3.13.1"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_ver"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_ver"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_ver"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_ver"
+
+    def coroutines_ver = "1.1.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_ver"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_ver"
 }

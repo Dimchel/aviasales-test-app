@@ -3,12 +3,24 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/app_nav_graph"
-	app:startDestination="@id/searchFragment">
+	app:startDestination="@id/flightFragment">
+
+	<fragment
+		android:id="@+id/flightFragment"
+		android:name="com.dimchel.aviasalestestapp.features.flight.FlightFragment"
+		android:label="SearchFragment"
+		tools:layout="@layout/fragment_flight">
+
+		<action
+			android:id="@+id/action_flightFragment_to_searchFragment"
+			app:destination="@id/searchFragment" />
+
+	</fragment>
 
 	<fragment
 		android:id="@+id/searchFragment"
 		android:name="com.dimchel.aviasalestestapp.features.search.SearchFragment"
 		android:label="SearchFragment"
-		tools:layout="@layout/fragment_search"/>
+		tools:layout="@layout/fragment_search" />
 
 </navigation>
