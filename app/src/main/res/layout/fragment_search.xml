@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="@dimen/default_margin"
+	android:orientation="vertical">
+
+	<AutoCompleteTextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="@dimen/default_half_margin"
+		android:hint="Город отправления"
+		android:textColor="@color/textColor"
+		android:textColorHint="@color/hintColor"/>
+
+	<AutoCompleteTextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="@dimen/default_half_margin"
+		android:hint="Город назначения"
+		android:textColor="@color/textColor"
+		android:textColorHint="@color/hintColor"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:text="Поиск"
+		android:backgroundTint="@color/colorPrimary"/>
+
+</LinearLayout>
