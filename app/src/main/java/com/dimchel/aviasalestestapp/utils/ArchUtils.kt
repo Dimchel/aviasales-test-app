@@ -1,5 +1,6 @@
 package com.dimchel.aviasalestestapp.utils
 
+import android.app.Activity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,5 +17,7 @@ fun <T : ViewModel> Fragment.viewModel(viewModelClass: Class<T>, factory: ViewMo
 	lazy { ViewModelProviders.of(this, factory).get(viewModelClass) }
 
 fun Fragment.navController(): NavController = Navigation.findNavController(activity!!, R.id.fragment_launch)
+
+fun Activity.navController(): NavController = Navigation.findNavController(this, R.id.fragment_launch)
 
 fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }

@@ -8,12 +8,16 @@
 	<fragment
 		android:id="@+id/flightFragment"
 		android:name="com.dimchel.aviasalestestapp.features.flight.FlightFragment"
-		android:label="SearchFragment"
+		android:label="FlightFragment"
 		tools:layout="@layout/fragment_flight">
 
 		<action
 			android:id="@+id/action_flightFragment_to_searchFragment"
 			app:destination="@id/searchFragment" />
+
+		<action
+			android:id="@+id/action_flightFragment_to_loadingFragment"
+			app:destination="@id/loadingFragment" />
 
 	</fragment>
 
@@ -22,5 +26,11 @@
 		android:name="com.dimchel.aviasalestestapp.features.search.SearchFragment"
 		android:label="SearchFragment"
 		tools:layout="@layout/fragment_search" />
+
+	<fragment
+		android:id="@+id/loadingFragment"
+		android:name="com.dimchel.aviasalestestapp.features.loading.LoadingFragment"
+		android:label="LoadingFragment"
+		tools:layout="@layout/fragment_loading"/>
 
 </navigation>

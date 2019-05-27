@@ -2,27 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:padding="@dimen/default_margin"
+	android:layout_margin="@dimen/default_margin"
 	android:orientation="vertical">
 
-	<EditText
-		android:id="@+id/flight_departure_point_edittext"
+	<TextView
+		android:id="@+id/flight_departure_city_button"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="@dimen/default_half_margin"
-		android:hint="Город отправления"
-		android:textColor="@color/textColor"
-		android:textColorHint="@color/hintColor"
-		android:cursorVisible="false"/>
+		android:padding="@dimen/default_margin"
+		android:background="@drawable/city_button_background"
+		android:text="Куда лететь"
+		android:textSize="18dp"/>
 
-	<EditText
-		android:id="@+id/flight_destination_edittext"
+	<TextView
+		android:id="@+id/flight_destination_city_button"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="@dimen/default_half_margin"
-		android:hint="Город назначения"
-		android:textColor="@color/textColor"
-		android:textColorHint="@color/hintColor"/>
+		android:padding="@dimen/default_margin"
+		android:background="@drawable/city_button_background"
+		android:text="Откуда вылет"
+		android:textSize="18dp"/>
 
 	<Button
 		android:id="@+id/flight_apply_button"
@@ -30,6 +31,7 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
 		android:text="Поиск"
+		android:textColor="@color/white"
 		android:backgroundTint="@color/colorPrimary"/>
 
 </LinearLayout>
