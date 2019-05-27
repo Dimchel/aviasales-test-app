@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.dimchel.aviasalestestapp.AviasalesApp
 import com.dimchel.aviasalestestapp.R
+import com.dimchel.aviasalestestapp.api.schemes.CityResponseScheme
+import com.dimchel.aviasalestestapp.api.schemes.LocationResponseScheme
 import com.dimchel.aviasalestestapp.features.search.SearchFragment.Companion.ARGUMENT_IS_DEPARTURE_POINT_SEARCH
 import com.dimchel.aviasalestestapp.utils.navController
 import com.dimchel.aviasalestestapp.utils.viewModel
@@ -32,6 +34,12 @@ class FlightFragment : Fragment() {
 		actionBar?.setDisplayHomeAsUpEnabled(false)
 		actionBar?.title = "Выберите маршрут"
 
+		initViews()
+
+		subscribeData()
+	}
+
+	private fun initViews() {
 		flight_departure_city_button.setOnClickListener {
 			val bundle = Bundle().apply {
 				putBoolean(ARGUMENT_IS_DEPARTURE_POINT_SEARCH, true)
@@ -47,9 +55,17 @@ class FlightFragment : Fragment() {
 		}
 
 		flight_apply_button.setOnClickListener {
-			viewModel.onApplyAction()
+			AviasalesApp.getFlightRepository().departureCity.value = CityResponseScheme(
+				"piter", "piter", LocationResponseScheme(59.95, 30.316667)
+			)
+			AviasalesApp.getFlightRepository().destinationCity.value = CityResponseScheme(
+				"moskva", "piter", LocationResponseScheme(55.752041, 37.617508)
+			)
+			navController().navigate(R.id.action_flightFragment_to_loadingFragment)
 		}
+	}
 
+	private fun subscribeData() {
 		viewModel.departureCity.observe(viewLifecycleOwner, Observer {
 			if (it != null) {
 				flight_departure_city_button.text = it

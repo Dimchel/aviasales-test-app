@@ -1,20 +1,21 @@
 package com.dimchel.aviasalestestapp.utils
 
-import com.dimchel.aviasalestestapp.features.loading.models.NavigationPointModel
+import com.dimchel.aviasalestestapp.features.loading.NavigationModel
+import com.dimchel.aviasalestestapp.features.loading.NavigationPointModel
 import com.google.android.gms.maps.model.LatLng
-import java.util.ArrayList
 
 object NavigationUtils {
 
-	private fun getGreatCirclePath(startPoint: LatLng, endPoint: LatLng, numberOfPoints:Int)
-		: ArrayList<NavigationPointModel> {
+	fun getGreatCirclePath(startPoint: LatLng, endPoint: LatLng, numberOfPoints:Int): NavigationModel {
 
-		val result = ArrayList<NavigationPointModel>()
+		val result: MutableList<NavigationPointModel> = arrayListOf()
 
 		val lat1 = startPoint.latitude * Math.PI / 180
 		val lon1 = startPoint.longitude * Math.PI / 180
 		val lat2 = endPoint.latitude * Math.PI / 180
 		val lon2 = endPoint.longitude * Math.PI / 180
+
+		val distance = calculateDistance(lat1, lon1, lat2, lon2)
 
 		val d = (2 * Math.asin(
 			Math.sqrt(
@@ -41,7 +42,17 @@ object NavigationUtils {
 
 			result.add(NavigationPointModel(LatLng(latN, lonN), bearing))
 		}
-		return result
+		return NavigationModel(distance, result.toList())
+	}
+
+	private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) : Double {
+		val earthRadiusKm = 6371
+		val diffLat = lat2-lat1
+		val diffLon = lon2-lon1
+		val a = Math.sin(diffLat/2) * Math.sin(diffLat/2) + Math.sin(diffLon / 2) *
+			Math.sin(diffLon / 2) * Math.cos(lat1) * Math.cos(lat2)
+		val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+		return earthRadiusKm * c
 	}
 
 	private fun calculateBearing(startLat: Double, startLng: Double, endLat: Double, endLng: Double): Double {

@@ -1,4 +1,4 @@
-package com.dimchel.aviasalestestapp.features.loading.models
+package com.dimchel.aviasalestestapp.features.loading
 
 import com.google.android.gms.maps.model.LatLng
 
