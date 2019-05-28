@@ -1,5 +1,10 @@
 package com.dimchel.aviasalestestapp.features.loading
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.graphics.Path
+import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,12 +22,17 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.fragment_loading.*
 
 
 class LoadingFragment : Fragment() {
 
 	private val departureCity = AviasalesApp.getFlightRepository().departureCity.value!!
 	private val destinationCity = AviasalesApp.getFlightRepository().destinationCity.value!!
+
+	private var navigationPointsList: List<NavigationPointModel> = arrayListOf()
+	private val pathPoints: MutableList<Point> = arrayListOf()
+	private val currentPlanePosition = 0
 
 	private lateinit var googleMap: GoogleMap
 
@@ -73,22 +83,54 @@ class LoadingFragment : Fragment() {
 		googleMap.addMarker(destination)
 		googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 256))
 
-		val navigationModel = NavigationUtils.getGreatCirclePath(departureLocation, destinationLocation, NUMBER_OF_PATH_POINTS)
+		navigationPointsList = NavigationUtils.getGreatCirclePath(departureLocation, destinationLocation)
 
-		navigationModel.navigationPoints.forEach {
+		navigationPointsList.forEach {
 			googleMap.addCircle(
 				CircleOptions()
 					.center(it.departurePoint)
 					.clickable(false)
-					.fillColor(R.color.white)
+					.fillColor(R.color.colorAccent)
 					.strokeWidth(0f)
-					.radius(10000.0)
+					.radius(POINT_RADIUS_IN_METERS)
 			)
+
+			val point: Point = googleMap.projection.toScreenLocation(it.departurePoint)
+			pathPoints.add(point)
 		}
+
+		startAnimation()
+	}
+
+	private fun startAnimation() {
+		val movePath = Path()
+		movePath.moveTo(pathPoints[0].x.toFloat(), pathPoints[0].y.toFloat())
+		for (i in 1 until pathPoints.size) {
+			movePath.lineTo(pathPoints[i].x.toFloat(), pathPoints[i].y.toFloat())
+		}
+
+		val rotationKeyFrames = arrayOfNulls<PropertyValuesHolder>(navigationPointsList.size)
+		navigationPointsList.forEachIndexed { i, it ->
+			Log.v("123123", "1: " + it.bearing)
+			rotationKeyFrames[i] = PropertyValuesHolder.ofFloat("rotation", it.bearing.toFloat())
+		}
+
+		val animatorSet = AnimatorSet()
+		animatorSet.playTogether(
+			ObjectAnimator
+				.ofFloat(search_plane_imageview, "x", "y", movePath).apply {
+					duration = ANIMATION_DURATION
+				},
+			ObjectAnimator
+				.ofFloat(search_plane_imageview, "rotation", navigationPointsList.first().bearing.toFloat(), navigationPointsList[5].bearing.toFloat()).apply {
+					duration = ANIMATION_DURATION
+				}
+		)
+		animatorSet.start()
 	}
 
 	companion object {
-		const val NUMBER_OF_PATH_POINTS = 30
+		const val ANIMATION_DURATION = 10000L
+		const val POINT_RADIUS_IN_METERS = 6000.0
 	}
-
 }

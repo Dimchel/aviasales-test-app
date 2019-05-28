@@ -1,12 +1,13 @@
 package com.dimchel.aviasalestestapp.utils
 
-import com.dimchel.aviasalestestapp.features.loading.NavigationModel
 import com.dimchel.aviasalestestapp.features.loading.NavigationPointModel
 import com.google.android.gms.maps.model.LatLng
 
 object NavigationUtils {
 
-	fun getGreatCirclePath(startPoint: LatLng, endPoint: LatLng, numberOfPoints:Int): NavigationModel {
+	private const val NUMBER_OF_PATH_POINTS_BY_KILOMETER = 0.05
+
+	fun getGreatCirclePath(startPoint: LatLng, endPoint: LatLng): List<NavigationPointModel> {
 
 		val result: MutableList<NavigationPointModel> = arrayListOf()
 
@@ -16,6 +17,8 @@ object NavigationUtils {
 		val lon2 = endPoint.longitude * Math.PI / 180
 
 		val distance = calculateDistance(lat1, lon1, lat2, lon2)
+
+		val numberOfPoints = (distance * NUMBER_OF_PATH_POINTS_BY_KILOMETER).toInt()
 
 		val d = (2 * Math.asin(
 			Math.sqrt(
@@ -42,7 +45,7 @@ object NavigationUtils {
 
 			result.add(NavigationPointModel(LatLng(latN, lonN), bearing))
 		}
-		return NavigationModel(distance, result.toList())
+		return result
 	}
 
 	private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) : Double {
