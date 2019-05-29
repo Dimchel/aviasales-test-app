@@ -9,11 +9,13 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_margin="@dimen/default_margin"
+		android:lines="1"
 		android:hint="Поиск"/>
 
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/search_recyclerview"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
+		android:layout_height="match_parent"
+		android:overScrollMode="never"/>
 
 </LinearLayout>

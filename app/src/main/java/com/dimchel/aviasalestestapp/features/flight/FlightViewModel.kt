@@ -15,6 +15,7 @@ class FlightViewModel(private val flightRepository: FlightRepository) : ViewMode
 		Transformations.map(flightRepository.destinationCity) { city -> city?.fullname }
 
 	private val navigationState: SingleLiveEvent<NavigationState> = SingleLiveEvent()
+	private val errors: SingleLiveEvent<String> = SingleLiveEvent()
 
 	fun onApplyAction() {
 		val departureCity = flightRepository.departureCity.value
@@ -22,10 +23,13 @@ class FlightViewModel(private val flightRepository: FlightRepository) : ViewMode
 
 		if (departureCity != null && destinationCity != null) {
 			navigationState.value = NavigationState(departureCity, destinationCity)
+		} else {
+			errors.value = "Заполните все поля"
 		}
 	}
 
 	fun getNavigationState(): LiveData<NavigationState> = navigationState
+	fun getErrors(): LiveData<String> = errors
 
 	class NavigationState(
 		val departureCity: CityResponseScheme,
