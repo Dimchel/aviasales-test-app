@@ -10,8 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.dimchel.aviasalestestapp.AviasalesApp
 import com.dimchel.aviasalestestapp.R
-import com.dimchel.aviasalestestapp.api.schemes.CityResponseScheme
-import com.dimchel.aviasalestestapp.api.schemes.LocationResponseScheme
 import com.dimchel.aviasalestestapp.features.search.SearchFragment.Companion.ARGUMENT_IS_DEPARTURE_POINT_SEARCH
 import com.dimchel.aviasalestestapp.utils.navController
 import com.dimchel.aviasalestestapp.utils.viewModel
@@ -55,13 +53,7 @@ class FlightFragment : Fragment() {
 		}
 
 		flight_apply_button.setOnClickListener {
-			AviasalesApp.getFlightRepository().departureCity.value = CityResponseScheme(
-				"piter", "piter", LocationResponseScheme(40.7127, -74.0059)
-			)
-			AviasalesApp.getFlightRepository().destinationCity.value = CityResponseScheme(
-				"moskva", "piter", LocationResponseScheme(40.416775, -3.703790)
-			)
-			navController().navigate(R.id.action_flightFragment_to_loadingFragment)
+			viewModel.onApplyAction()
 		}
 	}
 

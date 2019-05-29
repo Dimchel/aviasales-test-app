@@ -1,11 +1,11 @@
 package com.dimchel.aviasalestestapp.features.flight
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.dimchel.aviasalestestapp.api.schemes.CityResponseScheme
 import com.dimchel.aviasalestestapp.data.FlightRepository
+import com.dimchel.aviasalestestapp.utils.SingleLiveEvent
 
 class FlightViewModel(private val flightRepository: FlightRepository) : ViewModel() {
 
@@ -14,7 +14,7 @@ class FlightViewModel(private val flightRepository: FlightRepository) : ViewMode
 	val destinationCity: LiveData<String?> =
 		Transformations.map(flightRepository.destinationCity) { city -> city?.fullname }
 
-	private val navigationState: MutableLiveData<NavigationState> = MutableLiveData()
+	private val navigationState: SingleLiveEvent<NavigationState> = SingleLiveEvent()
 
 	fun onApplyAction() {
 		val departureCity = flightRepository.departureCity.value

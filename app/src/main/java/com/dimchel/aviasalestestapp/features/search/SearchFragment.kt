@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dimchel.aviasalestestapp.AviasalesApp
 import com.dimchel.aviasalestestapp.R
+import com.dimchel.aviasalestestapp.utils.KeyboardUtils
 import com.dimchel.aviasalestestapp.utils.navController
 import com.dimchel.aviasalestestapp.utils.viewModel
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -76,6 +77,12 @@ class SearchFragment : Fragment() {
 			navController().popBackStack()
 		}
 		search_recyclerview.adapter = searchHintsAdapter
+	}
+
+	override fun onResume() {
+		super.onResume()
+
+		KeyboardUtils.showKeyboard(context!!, search_search_edittext)
 	}
 
 	companion object {
