@@ -56,10 +56,10 @@ class FlightFragment : Fragment() {
 
 		flight_apply_button.setOnClickListener {
 			AviasalesApp.getFlightRepository().departureCity.value = CityResponseScheme(
-				"piter", "piter", LocationResponseScheme(59.95, 30.316667)
+				"piter", "piter", LocationResponseScheme(40.7127, -74.0059)
 			)
 			AviasalesApp.getFlightRepository().destinationCity.value = CityResponseScheme(
-				"moskva", "piter", LocationResponseScheme(55.752041, 37.617508)
+				"moskva", "piter", LocationResponseScheme(40.416775, -3.703790)
 			)
 			navController().navigate(R.id.action_flightFragment_to_loadingFragment)
 		}

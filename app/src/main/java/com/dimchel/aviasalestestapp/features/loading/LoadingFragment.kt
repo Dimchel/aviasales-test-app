@@ -1,15 +1,15 @@
 package com.dimchel.aviasalestestapp.features.loading
 
+import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
 import android.graphics.Path
 import android.graphics.Point
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.dimchel.aviasalestestapp.AviasalesApp
@@ -30,9 +30,10 @@ class LoadingFragment : Fragment() {
 	private val departureCity = AviasalesApp.getFlightRepository().departureCity.value!!
 	private val destinationCity = AviasalesApp.getFlightRepository().destinationCity.value!!
 
-	private var navigationPointsList: List<NavigationPointModel> = arrayListOf()
 	private val pathPoints: MutableList<Point> = arrayListOf()
 	private val currentPlanePosition = 0
+
+	private lateinit var navigationModel: NavigationModel
 
 	private lateinit var googleMap: GoogleMap
 
@@ -83,16 +84,16 @@ class LoadingFragment : Fragment() {
 		googleMap.addMarker(destination)
 		googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 256))
 
-		navigationPointsList = NavigationUtils.getGreatCirclePath(departureLocation, destinationLocation)
+		navigationModel = NavigationUtils.getGreatCirclePath(departureLocation, destinationLocation)
 
-		navigationPointsList.forEach {
+		navigationModel.pointsList.forEach {
 			googleMap.addCircle(
 				CircleOptions()
 					.center(it.departurePoint)
 					.clickable(false)
 					.fillColor(R.color.colorAccent)
 					.strokeWidth(0f)
-					.radius(POINT_RADIUS_IN_METERS)
+					.radius(navigationModel.pointSizeMeters.toDouble())
 			)
 
 			val point: Point = googleMap.projection.toScreenLocation(it.departurePoint)
@@ -103,34 +104,71 @@ class LoadingFragment : Fragment() {
 	}
 
 	private fun startAnimation() {
-		val movePath = Path()
-		movePath.moveTo(pathPoints[0].x.toFloat(), pathPoints[0].y.toFloat())
-		for (i in 1 until pathPoints.size) {
-			movePath.lineTo(pathPoints[i].x.toFloat(), pathPoints[i].y.toFloat())
-		}
+		val pointsList = navigationModel.pointsList
 
-		val rotationKeyFrames = arrayOfNulls<PropertyValuesHolder>(navigationPointsList.size)
-		navigationPointsList.forEachIndexed { i, it ->
-			Log.v("123123", "1: " + it.bearing)
-			rotationKeyFrames[i] = PropertyValuesHolder.ofFloat("rotation", it.bearing.toFloat())
-		}
-
-		val animatorSet = AnimatorSet()
-		animatorSet.playTogether(
+		val rotateAnimatorSet = AnimatorSet()
+		rotateAnimatorSet.playSequentially(
 			ObjectAnimator
-				.ofFloat(search_plane_imageview, "x", "y", movePath).apply {
-					duration = ANIMATION_DURATION
+				.ofFloat(
+					search_plane_imageview,
+					View.ROTATION,
+					pointsList[0].bearing.toFloat(),
+					pointsList[pointsList.size / 2].bearing.toFloat()
+				).apply {
+					duration = ANIMATION_DURATION / 2
+					interpolator = LinearInterpolator()
 				},
 			ObjectAnimator
-				.ofFloat(search_plane_imageview, "rotation", navigationPointsList.first().bearing.toFloat(), navigationPointsList[5].bearing.toFloat()).apply {
-					duration = ANIMATION_DURATION
+				.ofFloat(
+					search_plane_imageview,
+					View.ROTATION,
+					pointsList[pointsList.size / 2].bearing.toFloat(),
+					pointsList[pointsList.size - 2].bearing.toFloat()
+				).apply {
+					duration = ANIMATION_DURATION / 2
+					interpolator = LinearInterpolator()
 				}
 		)
-		animatorSet.start()
+
+		val movePath = Path()
+		movePath.moveTo(
+			pathPoints[0].x.toFloat() - search_plane_imageview.width / 2,
+			pathPoints[0].y.toFloat() - search_plane_imageview.height / 2
+		)
+		for (i in 1 until pathPoints.size) {
+			movePath.lineTo(
+				pathPoints[i].x.toFloat() - search_plane_imageview.width / 2,
+				pathPoints[i].y.toFloat() - search_plane_imageview.height / 2
+			)
+		}
+
+		val resultAnimatorSet = AnimatorSet()
+		resultAnimatorSet.playTogether(
+			ObjectAnimator
+				.ofFloat(
+					search_plane_imageview,
+					View.X,
+					View.Y,
+					movePath
+				).apply {
+					duration = ANIMATION_DURATION
+					interpolator = LinearInterpolator()
+				},
+			rotateAnimatorSet
+		)
+
+		resultAnimatorSet.addListener(object : Animator.AnimatorListener {
+			override fun onAnimationRepeat(animation: Animator?) = Unit
+			override fun onAnimationEnd(animation: Animator?) = Unit
+			override fun onAnimationCancel(animation: Animator?) = Unit
+			override fun onAnimationStart(animation: Animator?) {
+				search_plane_imageview.visibility = View.VISIBLE
+			}
+		})
+		resultAnimatorSet.start()
 	}
 
 	companion object {
 		const val ANIMATION_DURATION = 10000L
-		const val POINT_RADIUS_IN_METERS = 6000.0
 	}
 }
