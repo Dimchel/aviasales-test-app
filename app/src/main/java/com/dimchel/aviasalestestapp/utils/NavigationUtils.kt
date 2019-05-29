@@ -1,6 +1,5 @@
 package com.dimchel.aviasalestestapp.utils
 
-import android.util.Log
 import com.dimchel.aviasalestestapp.features.loading.NavigationModel
 import com.dimchel.aviasalestestapp.features.loading.NavigationPointModel
 import com.google.android.gms.maps.model.LatLng
@@ -49,7 +48,6 @@ object NavigationUtils {
 			result.add(NavigationPointModel(LatLng(latN, lonN), bearing))
 		}
 		val sizeOfPointsInMeters = (distance / NUMBER_OF_POINTS / PATH_POINTS_CALCULATION_FACTOR * 1000).toInt()
-		Log.v("123123", "number: $NUMBER_OF_POINTS  distance: $distance  size: $sizeOfPointsInMeters")
 
 		return NavigationModel(sizeOfPointsInMeters, result)
 	}

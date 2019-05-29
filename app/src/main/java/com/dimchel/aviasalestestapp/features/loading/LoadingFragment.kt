@@ -1,7 +1,6 @@
 package com.dimchel.aviasalestestapp.features.loading
 
 import android.animation.Animator
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.Path
 import android.graphics.Point
@@ -15,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.dimchel.aviasalestestapp.AviasalesApp
 import com.dimchel.aviasalestestapp.R
 import com.dimchel.aviasalestestapp.utils.NavigationUtils
+import com.dimchel.aviasalestestapp.utils.simpleclasses.SimpleAnimationListener
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -31,7 +31,9 @@ class LoadingFragment : Fragment() {
 	private val destinationCity = AviasalesApp.getFlightRepository().destinationCity.value!!
 
 	private val pathPoints: MutableList<Point> = arrayListOf()
-	private val currentPlanePosition = 0
+
+	private lateinit var movingAnimator: ObjectAnimator
+	private var currentFlightTime = 0L
 
 	private lateinit var navigationModel: NavigationModel
 
@@ -105,31 +107,6 @@ class LoadingFragment : Fragment() {
 
 	private fun startAnimation() {
 		val pointsList = navigationModel.pointsList
-
-		val rotateAnimatorSet = AnimatorSet()
-		rotateAnimatorSet.playSequentially(
-			ObjectAnimator
-				.ofFloat(
-					search_plane_imageview,
-					View.ROTATION,
-					pointsList[0].bearing.toFloat(),
-					pointsList[pointsList.size / 2].bearing.toFloat()
-				).apply {
-					duration = ANIMATION_DURATION / 2
-					interpolator = LinearInterpolator()
-				},
-			ObjectAnimator
-				.ofFloat(
-					search_plane_imageview,
-					View.ROTATION,
-					pointsList[pointsList.size / 2].bearing.toFloat(),
-					pointsList[pointsList.size - 2].bearing.toFloat()
-				).apply {
-					duration = ANIMATION_DURATION / 2
-					interpolator = LinearInterpolator()
-				}
-		)
-
 		val movePath = Path()
 		movePath.moveTo(
 			pathPoints[0].x.toFloat() - search_plane_imageview.width / 2,
@@ -142,33 +119,81 @@ class LoadingFragment : Fragment() {
 			)
 		}
 
-		val resultAnimatorSet = AnimatorSet()
-		resultAnimatorSet.playTogether(
-			ObjectAnimator
-				.ofFloat(
-					search_plane_imageview,
-					View.X,
-					View.Y,
-					movePath
-				).apply {
-					duration = ANIMATION_DURATION
-					interpolator = LinearInterpolator()
-				},
-			rotateAnimatorSet
-		)
+		val firstRotationAnimator = ObjectAnimator.
+			ofFloat(
+				search_plane_imageview,
+				View.ROTATION,
+				pointsList[0].bearing.toFloat(),
+				pointsList[pointsList.size / 2].bearing.toFloat()
+			).apply {
+				duration = ANIMATION_DURATION / 2
+				interpolator = LinearInterpolator()
+			}
 
-		resultAnimatorSet.addListener(object : Animator.AnimatorListener {
-			override fun onAnimationRepeat(animation: Animator?) = Unit
-			override fun onAnimationEnd(animation: Animator?) = Unit
-			override fun onAnimationCancel(animation: Animator?) = Unit
+		val secondRotationAnimator = ObjectAnimator.
+			ofFloat(
+				search_plane_imageview,
+				View.ROTATION,
+				pointsList[pointsList.size / 2].bearing.toFloat(),
+				pointsList[pointsList.size - 2].bearing.toFloat()
+			).apply {
+				duration = ANIMATION_DURATION / 2
+				interpolator = LinearInterpolator()
+			}
+
+		movingAnimator = ObjectAnimator.
+			ofFloat(
+				search_plane_imageview,
+				View.X,
+				View.Y,
+				movePath
+			).apply {
+				duration = ANIMATION_DURATION
+				interpolator = LinearInterpolator()
+			}
+
+		if (currentFlightTime < ANIMATION_DURATION / 2) {
+			firstRotationAnimator.addListener(object : SimpleAnimationListener() {
+				override fun onAnimationEnd(animation: Animator?) {
+					secondRotationAnimator.start()
+				}
+			})
+			firstRotationAnimator.start()
+			firstRotationAnimator.currentPlayTime = currentFlightTime
+		} else {
+			secondRotationAnimator.start()
+			secondRotationAnimator.currentPlayTime = currentFlightTime - ANIMATION_DURATION / 2
+		}
+
+		movingAnimator.addListener(object : SimpleAnimationListener() {
 			override fun onAnimationStart(animation: Animator?) {
 				search_plane_imageview.visibility = View.VISIBLE
 			}
+			override fun onAnimationEnd(animation: Animator?) {
+				currentFlightTime = 0L
+			}
 		})
-		resultAnimatorSet.start()
+		movingAnimator.start()
+		movingAnimator.currentPlayTime = currentFlightTime
+	}
+
+	override fun onSaveInstanceState(outState: Bundle) {
+		outState.putLong(ARGUMENT_CURRENT_FLIGHT_TIME, movingAnimator.currentPlayTime)
+
+		super.onSaveInstanceState(outState)
+	}
+
+	override fun onViewStateRestored(savedInstanceState: Bundle?) {
+		super.onViewStateRestored(savedInstanceState)
+
+		if (savedInstanceState != null) {
+			currentFlightTime = savedInstanceState.getLong(ARGUMENT_CURRENT_FLIGHT_TIME)
+		}
 	}
 
 	companion object {
 		const val ANIMATION_DURATION = 10000L
+
+		const val ARGUMENT_CURRENT_FLIGHT_TIME = "5fc71e29-71bb-4554-9917-12a5ed2b6878"
 	}
 }
