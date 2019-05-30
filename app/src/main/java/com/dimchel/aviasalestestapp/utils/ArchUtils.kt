@@ -10,9 +10,6 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.dimchel.aviasalestestapp.R
 
-fun <T : ViewModel> Fragment.viewModel(viewModelClass: Class<T>): Lazy<T> =
-	lazy { ViewModelProviders.of(this).get(viewModelClass) }
-
 fun <T : ViewModel> Fragment.viewModel(viewModelClass: Class<T>, factory: ViewModelProvider.Factory): Lazy<T> =
 	lazy { ViewModelProviders.of(this, factory).get(viewModelClass) }
 

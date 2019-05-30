@@ -5,8 +5,6 @@ import android.os.Handler
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 
-
-
 object KeyboardUtils {
 
     fun showKeyboard(context: Context, view: View) {

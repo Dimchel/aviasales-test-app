@@ -30,11 +30,10 @@ class LoadingFragment : Fragment() {
 	private val departureCity = AviasalesApp.getFlightRepository().departureCity.value!!
 	private val destinationCity = AviasalesApp.getFlightRepository().destinationCity.value!!
 
-	private val pathPoints: MutableList<Point> = arrayListOf()
-
-	private lateinit var movingAnimator: ObjectAnimator
 	private var currentFlightTime = 0L
+	private lateinit var movingAnimator: ObjectAnimator
 
+	private lateinit var pathPoints: MutableList<Point>
 	private lateinit var navigationModel: NavigationModel
 
 	private lateinit var googleMap: GoogleMap
@@ -63,11 +62,11 @@ class LoadingFragment : Fragment() {
 	private fun loadMapData() {
 		val departureLocation = LatLng(
 			departureCity.location.lat,
-			departureCity.location.lon
+			departureCity.location.lng
 		)
 		val destinationLocation = LatLng(
 			destinationCity.location.lat,
-			destinationCity.location.lon
+			destinationCity.location.lng
 		)
 
 		val departure = MarkerOptions()
@@ -84,7 +83,7 @@ class LoadingFragment : Fragment() {
 
 		googleMap.addMarker(departure)
 		googleMap.addMarker(destination)
-		googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 256))
+		googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), MAP_POINTS_PADDING))
 
 		navigationModel = NavigationUtils.getGreatCirclePath(departureLocation, destinationLocation)
 
@@ -193,7 +192,7 @@ class LoadingFragment : Fragment() {
 
 	companion object {
 		const val ANIMATION_DURATION = 10000L
-
+		const val MAP_POINTS_PADDING = 256
 		const val ARGUMENT_CURRENT_FLIGHT_TIME = "5fc71e29-71bb-4554-9917-12a5ed2b6878"
 	}
 }

@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dimchel.aviasalestestapp.api.ApiResult
-import com.dimchel.aviasalestestapp.api.schemes.CityResponseScheme
 import com.dimchel.aviasalestestapp.data.FlightRepository
+import com.dimchel.aviasalestestapp.data.models.CityModel
 import com.dimchel.aviasalestestapp.utils.default
 import kotlinx.coroutines.launch
 
@@ -14,8 +14,8 @@ class SearchViewModel(
 	private val flightRepository: FlightRepository
 ) : ViewModel() {
 
-	private val hintsList: MutableLiveData<List<CityResponseScheme>> =
-		MutableLiveData<List<CityResponseScheme>>().default(arrayListOf())
+	private val hintsList: MutableLiveData<List<CityModel>> =
+		MutableLiveData<List<CityModel>>().default(arrayListOf())
 
 	fun onQuery(query: String) {
 		if (query.length < MIN_QUERY_LENGTH) {
@@ -28,7 +28,7 @@ class SearchViewModel(
 			val result = flightRepository.getHints(query, "en")
 
 			if (result is ApiResult.ApiSuccess) {
-				hintsList.value = result.result.cities
+				hintsList.value = result.result
 			}
 		}
 	}
@@ -49,7 +49,7 @@ class SearchViewModel(
 		}
 	}
 
-	fun getHintsList(): LiveData<List<CityResponseScheme>> = hintsList
+	fun getHintsList(): LiveData<List<CityModel>> = hintsList
 
 	companion object {
 		private const val MIN_QUERY_LENGTH = 3
