@@ -74,7 +74,7 @@ class LoadingFragment : Fragment() {
 			.position(departureLocation)
 
 		val destination = MarkerOptions()
-			.title(departureCity.city)
+			.title(destinationCity.city)
 			.position(destinationLocation)
 
 		val builder = LatLngBounds.Builder()
@@ -87,6 +87,7 @@ class LoadingFragment : Fragment() {
 
 		navigationModel = NavigationUtils.getGreatCirclePath(departureLocation, destinationLocation)
 
+		pathPoints = arrayListOf()
 		navigationModel.pointsList.forEach {
 			googleMap.addCircle(
 				CircleOptions()
